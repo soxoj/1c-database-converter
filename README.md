@@ -1,42 +1,16 @@
-# OSINT cli tool skeleton
+# 1C database converter
 
-<p align="center">
-  <p align="center">
-    <a href="https://pypi.org/project/osint-cli-tool-skeleton/">
-      <img alt="PyPI" src="https://img.shields.io/pypi/v/osint-cli-tool-skeleton?style=flat-square">
-    </a>
-    <a href="https://pypi.org/project/osint-cli-tool-skeleton/">
-      <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dw/osint-cli-tool-skeleton?style=flat-square">
-    </a>
-    <a href="https://pypi.org/project/osint-cli-tool-skeleton/">
-      <img alt="Views" src="https://komarev.com/ghpvc/?username=osint-cli-tool-skeleton&color=brightgreen&label=views&style=flat-square">
-    </a>
-  </p>
-  <p align="center">
-    <img src="https://raw.githubusercontent.com/soxoj/osint-cli-tool-skeleton/main/pictures/logo.png" height="200"/>
-  </p>
-</p>
+The tool for extacting content of 1CD and other 1C files and exporting to CSV.
 
-Template for new OSINT command-line tools.
-
-**Press button "[Use this template](https://github.com/soxoj/osint-cli-tool-skeleton/generate)" to generate your own tool repository.** See [INSTALL.md](INSTALL.md) for further setup.
-
-## Features
-
-- Detailed readme
-- Process N targets from args, text files, stdin
-- Make TXT, CSV reports
-- Proxy support
-- Ready to publish Python package
 
 ## Usage
 
 ```sh
-$ python3 -m osint-cli-tool-skeleton <target>
+$ python3 -m onec_database_converter <target>
 
 # or simply
 
-$ osint_cli_tool_skeleton <target>
+$ onec_database_converter <target>
 
 # or locally without installing
 
@@ -49,7 +23,7 @@ $ ./run.py <target>
 
 Specify targets one or more times:
 ```sh
-$ osint_cli_tool_skeleton www.google.com reddit.com patreon.com
+$ onec_database_converter www.google.com reddit.com patreon.com
 
 Target: www.google.com
 Results found: 1
@@ -74,12 +48,12 @@ Total found: 3
 
 Or use a file with targets list:
 ```sh
-$ osint_cli_tool_skeleton --target-list targets.txt
+$ onec_database_converter --target-list targets.txt
 ```
 
 Or combine tool with other through input/output pipelining:
 ```sh
-$ cat list.txt | osint_cli_tool_skeleton --targets-from-stdin
+$ cat list.txt | onec_database_converter --targets-from-stdin
 ```
 </details>
 
@@ -89,7 +63,7 @@ $ cat list.txt | osint_cli_tool_skeleton --targets-from-stdin
 
 The skeleton implements CSV reports:
 ```sh
-$ osint_cli_tool_skeleton www.google.com reddit.com patreon.com -oC results.csv
+$ onec_database_converter www.google.com reddit.com patreon.com -oC results.csv
 ...
 Results were saved to file results.csv
 
@@ -102,7 +76,7 @@ $ more results.csv
 
 Also tool supports JSON output format:
 ```
-osint_cli_tool_skeleton www.google.com reddit.com patreon.com -oJ results.json
+onec_database_converter www.google.com reddit.com patreon.com -oJ results.json
 ...
 Results were saved to file results.json
 
@@ -123,7 +97,7 @@ $ cat results.json | jq | head -n 10
 
 And can save console output to text file separately:
 ```sh
-osint_cli_tool_skeleton www.google.com reddit.com patreon.com -oT results.txt
+onec_database_converter www.google.com reddit.com patreon.com -oT results.txt
 ...
 Results were saved to file results.txt
 
@@ -141,7 +115,7 @@ Code: 200
 
 The tool supports proxy:
 ```sh
-$ osint_cli_tool_skeleton www.google.com --proxy http://localhost:8080
+$ onec_database_converter www.google.com --proxy http://localhost:8080
 ```
 </details>
 
@@ -152,7 +126,7 @@ $ osint_cli_tool_skeleton www.google.com --proxy http://localhost:8080
 
 The tool can be run as a server:
 ```sh
-$ osint_cli_tool_skeleton --server 0.0.0.0:8080
+$ onec_database_converter --server 0.0.0.0:8080
 Server started
 
 $ curl localhost:8080/check -d '{"targets": ["google.com", "yahoo.com"]}' -s | jq

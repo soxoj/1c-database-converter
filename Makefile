@@ -1,8 +1,8 @@
-PROJECT_NAME=osint_cli_tool_skeleton
-LINT_FILES=osint_cli_tool_skeleton
+PROJECT_NAME=onec_database_converter
+LINT_FILES=onec_database_converter
 
 test:
-	coverage run --source=./osint_cli_tool_skeleton -m pytest tests
+	coverage run --source=./onec_database_converter -m pytest tests
 	coverage report -m
 	coverage html
 

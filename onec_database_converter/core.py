@@ -1,5 +1,7 @@
 import asyncio
 import logging
+import onec_dtools
+import os
 from json import JSONEncoder
 from typing import List, Any
 
@@ -20,9 +22,10 @@ class InputData:
 
 
 class OutputData:
-    def __init__(self, value, code, error):
-        self.value = value
-        self.code = code
+    def __init__(self, ftype, value, status, error):
+        self.out_file = value
+        self.file_type = ftype
+        self.status = status
         self.error = error
 
     @property
@@ -94,33 +97,63 @@ class Processor:
         await self.session.close()
 
 
+    def onec_tables_csv_export(self, filename, output_dir):
+        with open(filename, 'rb') as f:
+            db = onec_dtools.DatabaseReader(f)
+            tables = db.tables.items()
+            for i in tables:
+                output_filename = os.path.join(output_dir, i[0]+'.csv')
+                output_file = open(output_filename, 'w')
+
+                for row in i[1]:
+                    if row.is_empty:
+                        continue
+                    fields = row.as_list(True)
+                    new_fields = []
+                    for field in fields:
+                        if type(field) == bytes:
+                            new_fields.append('<BINARY DATA>')
+                        else:
+                            new_fields.append(str(field))
+
+                    output_file.write(';'.join(new_fields))
+
+                output_file.close()
+
     async def request(self, input_data: InputData) -> OutputDataList:
         from bs4 import BeautifulSoup as bs
         status = 0
+        file_type = 'unknown'
         result = None
         error = None
 
         try:
-            url = input_data.value
-            if not url.startswith('http'):
-                url = 'https://' + url
+            filename = input_data.value
 
-            response = await self.session.get(url)
-
-            status = response.status
-            response_content = await response.content.read()
-            charset = response.charset or "utf-8"
-            html = response_content.decode(charset, "ignore")
-
-            soup = bs(html, 'html.parser')
-            title = soup.find('title').string
-            result = title
+            if filename.lower().endswith('.cf'):
+                file_type = 'CF'
+                result = filename + '_unpack'
+                if os.path.exists(result):
+                    status = f'Not exported, directory {result} exists!'
+                else:
+                    onec_dtools.extract(filename, result)
+                    status = 'Exported content of CF file'
+            elif filename.lower().endswith('.1cd'):
+                file_type = '1CD'
+                result = filename + '_csv'
+                if os.path.exists(result):
+                    status = f'Not exported, directory {result} exists!'
+                else:
+                    os.mkdir(result)
+                    self.onec_tables_csv_export(filename, result)
+                    status = 'Exported content of 1CD file'
 
         except Exception as e:
-            error = e
-            self.logger.error(e, exc_info=False)
+            self.logger.error(e, exc_info=True)
 
-        results = OutputDataList(input_data, [OutputData(result, status, error)])
+        await asyncio.sleep(0)
+
+        results = OutputDataList(input_data, [OutputData(file_type, result, status, error)])
 
         return results
 
