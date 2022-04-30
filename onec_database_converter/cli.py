@@ -18,14 +18,12 @@ logging.basicConfig(format='[%(asctime)s][%(levelname)s][%(filename)s:%(funcName
 
 
 def setup_arguments_parser():
-    from aiohttp import __version__ as aiohttp_version
     from ._version import __version__
 
     version_string = '\n'.join(
         [
             f'%(prog)s {__version__}',
             f'Python:  {platform.python_version()}',
-            f'Aiohttp:  {aiohttp_version}',
         ]
     )
 

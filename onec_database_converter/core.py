@@ -2,10 +2,9 @@ import asyncio
 import logging
 import onec_dtools
 import os
+import re
 from json import JSONEncoder
 from typing import List, Any
-
-from aiohttp import TCPConnector, ClientSession
 
 from .executor import AsyncioProgressbarQueueExecutor, AsyncioSimpleExecutor
 
@@ -23,7 +22,7 @@ class InputData:
 
 class OutputData:
     def __init__(self, ftype, value, status, error):
-        self.out_file = value
+        self.out_dir = value
         self.file_type = ftype
         self.status = status
         self.error = error
@@ -73,19 +72,6 @@ class OutputDataListEncoder(JSONEncoder):
 
 class Processor:
     def __init__(self, *args, **kwargs):
-        from aiohttp_socks import ProxyConnector
-
-        # make http client session
-        proxy = kwargs.get('proxy')
-        self.proxy = proxy
-        if proxy:
-            connector = ProxyConnector.from_url(proxy, ssl=False)
-        else:
-            connector = TCPConnector(ssl=False)
-
-        self.session = ClientSession(
-            connector=connector, trust_env=True
-        )
         if kwargs.get('no_progressbar'):
             self.executor = AsyncioSimpleExecutor()
         else:
@@ -94,8 +80,7 @@ class Processor:
         self.logger = logging.getLogger('processor')
 
     async def close(self):
-        await self.session.close()
-
+        await asyncio.sleep(0)
 
     def onec_tables_csv_export(self, filename, output_dir):
         with open(filename, 'rb') as f:
@@ -108,7 +93,11 @@ class Processor:
                 for row in i[1]:
                     if row.is_empty:
                         continue
-                    fields = row.as_list(True)
+                    try:
+                        fields = row.as_list(True)
+                    except RuntimeError:
+                        continue
+
                     new_fields = []
                     for field in fields:
                         if type(field) == bytes:
@@ -121,7 +110,6 @@ class Processor:
                 output_file.close()
 
     async def request(self, input_data: InputData) -> OutputDataList:
-        from bs4 import BeautifulSoup as bs
         status = 0
         file_type = 'unknown'
         result = None
@@ -130,14 +118,14 @@ class Processor:
         try:
             filename = input_data.value
 
-            if filename.lower().endswith('.cf'):
-                file_type = 'CF'
+            if re.match(r'.+?\.(cf|cfu|cfe|epf|ert|hbk)$', filename.lower()):
+                file_type = 'container'
                 result = filename + '_unpack'
                 if os.path.exists(result):
                     status = f'Not exported, directory {result} exists!'
                 else:
                     onec_dtools.extract(filename, result)
-                    status = 'Exported content of CF file'
+                    status = 'Exported content of container file'
             elif filename.lower().endswith('.1cd'):
                 file_type = '1CD'
                 result = filename + '_csv'
