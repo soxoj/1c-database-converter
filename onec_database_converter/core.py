@@ -105,7 +105,7 @@ class Processor:
                         else:
                             new_fields.append(str(field))
 
-                    output_file.write(';'.join(new_fields))
+                    output_file.write(';'.join(new_fields) + '\n')
 
                 output_file.close()
 

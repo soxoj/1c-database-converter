@@ -5,22 +5,18 @@ The tool for extacting content of 1CD and other 1C files and exporting to CSV.
 ## Usage
 
 ```sh
-$ python3 -m onec_database_converter <target>
+$ python3 -m onec_database_converter <file>
 
 # or simply
 
-$ onec_database_converter <target>
+$ onec_database_converter <file>
 
 # or locally without installing
 
-$ ./run.py <target>
+$ ./run.py <file>
 ```
 
-<details>
-<summary>Targets</summary>
-</br>
-
-Specify targets one or more times:
+Specify files one or more times:
 ```sh
 $ onec_database_converter conf.cf 8-2-14.1CD
 Target: conf.cf
@@ -49,7 +45,6 @@ Or combine tool with other through input/output pipelining:
 ```sh
 $ cat list.txt | onec_database_converter --targets-from-stdin
 ```
-</details>
 
 ## Installation
 
