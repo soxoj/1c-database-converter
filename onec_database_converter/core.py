@@ -88,7 +88,7 @@ class Processor:
             tables = db.tables.items()
             for i in tables:
                 output_filename = os.path.join(output_dir, i[0]+'.csv')
-                output_file = open(output_filename, 'w')
+                output_file = open(output_filename, 'w', encoding='utf-8')
 
                 for row in i[1]:
                     if row.is_empty:
@@ -118,7 +118,9 @@ class Processor:
         try:
             filename = input_data.value
 
-            if re.match(r'.+?\.(cf|cfu|cfe|epf|ert|hbk)$', filename.lower()):
+            if not os.path.exists(filename):
+                status = 'File does not exist'
+            elif re.match(r'.+?\.(cf|cfu|cfe|epf|ert|hbk)$', filename.lower()):
                 file_type = 'container'
                 result = filename + '_unpack'
                 if os.path.exists(result):

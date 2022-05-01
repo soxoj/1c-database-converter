@@ -1,6 +1,11 @@
 # 1C database converter
 
-The tool for extacting content of 1CD and other 1C files and exporting to CSV.
+
+1C is a very popular program in CIS countries for storing data in enterprises (accounting, document management, etc.).
+
+The purpose of this tool is to extact and export to CSV content of `1CD` and other 1C files.
+
+**Attention!** Not all content can be converted to text. Use 1C [official software](https://online.1c.ru/catalog/programs/program/18610119/) to explore binary data.
 
 ## Usage
 
