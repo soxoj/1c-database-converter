@@ -1,5 +1,5 @@
 asyncio==3.4.3
-tqdm==4.65.0
+tqdm==4.66.1
 colorama==0.4.6
 termcolor==2.2.0
 onec_dtools==0.5.0
